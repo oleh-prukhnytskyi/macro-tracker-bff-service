@@ -6,6 +6,7 @@ import com.olehprukhnytskyi.macrotrackerbffservice.util.CustomHeaders;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/dashboard")
@@ -30,7 +32,12 @@ public class DashboardController {
     @GetMapping
     public Mono<ResponseEntity<DashboardDto>> getDashboard(
             @RequestHeader(CustomHeaders.X_USER_ID) Long userId) {
+        log.debug("Received dashboard request for userId={}", userId);
         return dashboardService.getDashboard(userId)
+                .doOnSuccess(dto -> log
+                        .debug("Dashboard data aggregated successfully for userId={}", userId))
+                .doOnError(error -> log
+                        .error("Failed to aggregate dashboard data for userId={}", userId, error))
                 .map(ResponseEntity::ok);
     }
 }

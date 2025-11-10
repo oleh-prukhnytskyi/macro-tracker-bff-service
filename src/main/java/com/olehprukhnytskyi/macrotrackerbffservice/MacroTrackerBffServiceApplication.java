@@ -7,9 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "Macro Tracker API",
+                title = "BFF Service API",
                 version = "1.0",
-                description = "This BFF (Backend for Frontend) service"
+                description = "This BFF (Backend for Frontend) microservice"
                         + " provides aggregated data from multiple microservices"
         )
 )
