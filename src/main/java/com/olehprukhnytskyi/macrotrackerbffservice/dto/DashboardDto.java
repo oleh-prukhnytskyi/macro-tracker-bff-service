@@ -1,5 +1,6 @@
 package com.olehprukhnytskyi.macrotrackerbffservice.dto;
 
+import com.olehprukhnytskyi.dto.PagedResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;

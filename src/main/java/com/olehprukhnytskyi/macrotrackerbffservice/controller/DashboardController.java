@@ -2,7 +2,7 @@ package com.olehprukhnytskyi.macrotrackerbffservice.controller;
 
 import com.olehprukhnytskyi.macrotrackerbffservice.dto.DashboardDto;
 import com.olehprukhnytskyi.macrotrackerbffservice.service.DashboardService;
-import com.olehprukhnytskyi.macrotrackerbffservice.util.CustomHeaders;
+import com.olehprukhnytskyi.util.CustomHeaders;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

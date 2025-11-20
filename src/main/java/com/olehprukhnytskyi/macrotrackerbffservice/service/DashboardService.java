@@ -1,10 +1,12 @@
 package com.olehprukhnytskyi.macrotrackerbffservice.service;
 
+import com.olehprukhnytskyi.dto.PagedResponse;
+import com.olehprukhnytskyi.exception.ExternalServiceException;
+import com.olehprukhnytskyi.exception.error.CommonErrorCode;
 import com.olehprukhnytskyi.macrotrackerbffservice.dto.DashboardDto;
 import com.olehprukhnytskyi.macrotrackerbffservice.dto.IntakeDto;
-import com.olehprukhnytskyi.macrotrackerbffservice.dto.PagedResponse;
 import com.olehprukhnytskyi.macrotrackerbffservice.dto.UserGoalDto;
-import com.olehprukhnytskyi.macrotrackerbffservice.util.CustomHeaders;
+import com.olehprukhnytskyi.util.CustomHeaders;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -26,13 +28,19 @@ public class DashboardService {
                 .header(CustomHeaders.X_USER_ID, userId.toString())
                 .retrieve()
                 .bodyToMono(UserGoalDto.class)
-                .doOnError(e -> log.error("Failed to fetch user goals for userId={}", userId, e));
+                .doOnError(e -> log.error("Failed to fetch user goals for userId={}", userId, e))
+                .onErrorMap(e -> new ExternalServiceException(
+                        CommonErrorCode.UPSTREAM_SERVICE_UNAVAILABLE,
+                        "User service unavailable", e));
         Mono<PagedResponse<IntakeDto>> intakesMono = intakeWebClient.get()
                 .uri("/api/intake")
                 .header(CustomHeaders.X_USER_ID, userId.toString())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<PagedResponse<IntakeDto>>() {})
-                .doOnError(e -> log.error("Failed to fetch intakes for userId={}", userId, e));
+                .doOnError(e -> log.error("Failed to fetch intakes for userId={}", userId, e))
+                .onErrorMap(e -> new ExternalServiceException(
+                        CommonErrorCode.UPSTREAM_SERVICE_UNAVAILABLE,
+                        "Intake service unavailable", e));
         return Mono.zip(userGoalMono, intakesMono)
                 .map(tuple -> {
                     DashboardDto dto = DashboardDto.builder()

@@ -4,7 +4,7 @@ import static org.mockito.Mockito.when;
 
 import com.olehprukhnytskyi.macrotrackerbffservice.dto.DashboardDto;
 import com.olehprukhnytskyi.macrotrackerbffservice.service.DashboardService;
-import com.olehprukhnytskyi.macrotrackerbffservice.util.CustomHeaders;
+import com.olehprukhnytskyi.util.CustomHeaders;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
