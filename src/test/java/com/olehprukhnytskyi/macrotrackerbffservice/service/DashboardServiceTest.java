@@ -1,5 +1,6 @@
 package com.olehprukhnytskyi.macrotrackerbffservice.service;
 
+import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class DashboardServiceTest {
     @Test
     @DisplayName("Should aggregate dashboard data")
     void getDashboard_shouldAggregateDashboardData() {
-        StepVerifier.create(dashboardService.getDashboard(1L))
+        StepVerifier.create(dashboardService.getDashboard(1L, LocalDate.now()))
                 .expectNextMatches(dto -> dto.getGoal() != null)
                 .verifyComplete();
     }

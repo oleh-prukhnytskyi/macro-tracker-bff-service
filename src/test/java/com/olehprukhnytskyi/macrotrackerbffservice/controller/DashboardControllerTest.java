@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 import com.olehprukhnytskyi.macrotrackerbffservice.dto.DashboardDto;
 import com.olehprukhnytskyi.macrotrackerbffservice.service.DashboardService;
 import com.olehprukhnytskyi.util.CustomHeaders;
+import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +28,18 @@ class DashboardControllerTest {
     @DisplayName("Should return dashboard")
     void getDashboard_shouldReturnDashboard() {
         // Given
-        DashboardDto dto = DashboardDto.builder()
-                .build();
+        DashboardDto dto = DashboardDto.builder().build();
 
-        when(dashboardService.getDashboard(1L)).thenReturn(Mono.just(dto));
+        LocalDate now = LocalDate.now();
+
+        when(dashboardService.getDashboard(1L, now)).thenReturn(Mono.just(dto));
 
         // When & Then
         webTestClient.get()
-                .uri("/api/dashboard")
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/dashboard")
+                        .queryParam("date", now)
+                        .build())
                 .header(CustomHeaders.X_USER_ID, "1")
                 .exchange()
                 .expectStatus().isOk()

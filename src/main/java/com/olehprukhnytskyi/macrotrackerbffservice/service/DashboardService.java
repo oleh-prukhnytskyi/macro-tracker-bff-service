@@ -7,6 +7,7 @@ import com.olehprukhnytskyi.macrotrackerbffservice.dto.DashboardDto;
 import com.olehprukhnytskyi.macrotrackerbffservice.dto.IntakeDto;
 import com.olehprukhnytskyi.macrotrackerbffservice.dto.UserGoalDto;
 import com.olehprukhnytskyi.util.CustomHeaders;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -21,7 +22,7 @@ public class DashboardService {
     private final WebClient userWebClient;
     private final WebClient intakeWebClient;
 
-    public Mono<DashboardDto> getDashboard(Long userId) {
+    public Mono<DashboardDto> getDashboard(Long userId, LocalDate date) {
         log.debug("Fetching dashboard data for userId={}", userId);
         Mono<UserGoalDto> userGoalMono = userWebClient.get()
                 .uri("/api/profile/goal")
@@ -33,7 +34,10 @@ public class DashboardService {
                         CommonErrorCode.UPSTREAM_SERVICE_UNAVAILABLE,
                         "User service unavailable", e));
         Mono<PagedResponse<IntakeDto>> intakesMono = intakeWebClient.get()
-                .uri("/api/intake")
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/intake")
+                        .queryParam("date", date)
+                        .build())
                 .header(CustomHeaders.X_USER_ID, userId.toString())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<PagedResponse<IntakeDto>>() {})
