@@ -16,14 +16,25 @@ class DashboardServiceTest {
 
     @BeforeEach
     void setup() {
-        WebClient userClient = WebClient.builder()
-                .exchangeFunction(request -> Mono.just(
-                        ClientResponse.create(HttpStatus.OK)
+        WebClient mockClient = WebClient.builder()
+                .exchangeFunction(request -> {
+                    String path = request.url().getPath();
+                    if (path.contains("/goal")) {
+                        return Mono.just(ClientResponse.create(HttpStatus.OK)
                                 .body("{\"goal\":123}")
                                 .header(HttpHeaders.CONTENT_TYPE, "application/json")
-                                .build()))
+                                .build());
+                    } else if (path.contains("/intake")) {
+                        return Mono.just(ClientResponse.create(HttpStatus.OK)
+                                .body("[{\"id\": 1, \"calories\": 500}]")
+                                .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                                .build());
+                    }
+
+                    return Mono.just(ClientResponse.create(HttpStatus.NOT_FOUND).build());
+                })
                 .build();
-        dashboardService = new DashboardService(userClient, userClient);
+        dashboardService = new DashboardService(mockClient, mockClient);
     }
 
     @Test

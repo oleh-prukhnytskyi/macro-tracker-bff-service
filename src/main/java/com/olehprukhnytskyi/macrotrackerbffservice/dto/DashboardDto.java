@@ -1,7 +1,7 @@
 package com.olehprukhnytskyi.macrotrackerbffservice.dto;
 
-import com.olehprukhnytskyi.dto.PagedResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,5 +13,5 @@ public class DashboardDto {
     private UserGoalDto goal;
 
     @Schema(description = "Paginated list of food intake records")
-    private PagedResponse<IntakeDto> intakes;
+    private List<IntakeDto> intakes;
 }

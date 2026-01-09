@@ -1,6 +1,5 @@
 package com.olehprukhnytskyi.macrotrackerbffservice.service;
 
-import com.olehprukhnytskyi.dto.PagedResponse;
 import com.olehprukhnytskyi.exception.ExternalServiceException;
 import com.olehprukhnytskyi.exception.error.CommonErrorCode;
 import com.olehprukhnytskyi.macrotrackerbffservice.dto.DashboardDto;
@@ -8,6 +7,7 @@ import com.olehprukhnytskyi.macrotrackerbffservice.dto.IntakeDto;
 import com.olehprukhnytskyi.macrotrackerbffservice.dto.UserGoalDto;
 import com.olehprukhnytskyi.util.CustomHeaders;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -33,14 +33,14 @@ public class DashboardService {
                 .onErrorMap(e -> new ExternalServiceException(
                         CommonErrorCode.UPSTREAM_SERVICE_UNAVAILABLE,
                         "User service unavailable", e));
-        Mono<PagedResponse<IntakeDto>> intakesMono = intakeWebClient.get()
+        Mono<List<IntakeDto>> intakesMono = intakeWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/api/intake")
                         .queryParam("date", date)
                         .build())
                 .header(CustomHeaders.X_USER_ID, userId.toString())
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<PagedResponse<IntakeDto>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<IntakeDto>>() {})
                 .doOnError(e -> log.error("Failed to fetch intakes for userId={}", userId, e))
                 .onErrorMap(e -> new ExternalServiceException(
                         CommonErrorCode.UPSTREAM_SERVICE_UNAVAILABLE,
